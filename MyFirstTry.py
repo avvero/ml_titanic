@@ -44,13 +44,20 @@ print(t1)
 
 print(t1.dtypes)
 
-regr = linear_model.LinearRegression()
+regr = linear_model.LogisticRegression()
 regr.fit(X[0:840], Y[0:840])
 
 print(regr)
 print(regr.coef_)
 
-m = np.mean((regr.predict(X[841:])-Y[841:])**2)
+P = regr.predict(X[841:])
+print(P)
+print(type(P))
+Pf = pd.DataFrame(P)
+print(Pf)
+print(type(Pf))
+
+m = np.mean((Pf-Y[841:])**2)
 print(m)
 
 score = regr.score(X[841:], Y[841:])
