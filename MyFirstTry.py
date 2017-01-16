@@ -25,7 +25,7 @@ print(train.describe())
 prepare(train)
 
 # Train 1
-predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'FamilySize', 'NameLength']
+predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'FamilySize', 'NameLength', 'Title']
 alg = linear_model.LogisticRegression()
 scores = cross_validation.cross_val_score(alg, train[predictors], train["Survived"], cv=3)
 
