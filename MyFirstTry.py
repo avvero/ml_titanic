@@ -53,7 +53,7 @@ print("Alg")
 print(alg)
 
 print("Plot")
-plot_learning_curve(pipeline, "sdf", train[predictors], train["Survived"], (0.7, 1.01), cv=3, n_jobs=1)
+plot_learning_curve(pipeline, "sdf", train[predictors], train["Survived"], (-0.1, 1.1), cv=3, n_jobs=1)
 plt.show()
 
 print("-------TEST--------")
