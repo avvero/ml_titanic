@@ -1,4 +1,5 @@
 import re
+import numpy as np
 
 # A function to get the title from a name.
 def get_title(name):
@@ -8,6 +9,15 @@ def get_title(name):
     if title_search:
         return title_search.group(1)
     return ""
+
+# A function to get the title from a name.
+def get_last_name(name):
+    # Use a regular expression to search for a title.  Titles always consist of capital and lowercase letters, and end with a period.
+    title_search = re.search('([A-Z])\w+', name)
+    # If the title exists, extract and return it.
+    if title_search:
+        return title_search.group(0)
+    return np.NaN
 
 def prepare(train):
     # The titanic variable is available here.
