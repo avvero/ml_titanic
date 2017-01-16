@@ -3,6 +3,7 @@ import pandas as pd
 import pylab as P
 import matplotlib.pyplot as plt
 from sklearn import linear_model
+from sklearn import cross_validation
 
 # Print you can execute arbitrary python code
 train = pd.read_csv("train.csv", dtype={"Age": np.float64}, )
@@ -23,13 +24,9 @@ print(train.describe())
 
 # The titanic variable is available here.
 train["Age"] = train["Age"].fillna(train["Age"].median())
-
-# Replace all the occurences of male with the number 0.
 train.loc[train["Sex"] == "male", "Sex"] = 0
 train.loc[train["Sex"] == "female", "Sex"] = 1
-
 train["Embarked"] = train["Embarked"].fillna("S")
-
 train.loc[train["Embarked"] == "S", "Embarked"] = 0
 train.loc[train["Embarked"] == "C", "Embarked"] = 1
 train.loc[train["Embarked"] == "Q", "Embarked"] = 2
@@ -40,25 +37,48 @@ t1 = train[['Pclass', 'Sex', 'Age', 'Embarked', 'Survived']]
 X = t1[['Pclass', 'Sex', 'Age', 'Embarked']]
 Y = t1[['Survived']]
 
+print("Train SET")
 print(t1)
-
-print(t1.dtypes)
 
 regr = linear_model.LogisticRegression()
 regr.fit(X[0:840], Y[0:840])
 
+print("Result")
 print(regr)
 print(regr.coef_)
 
-P = regr.predict(X[841:])
-print(P)
-print(type(P))
-Pf = pd.DataFrame(P)
-print(Pf)
-print(type(Pf))
+print("----------------")
 
-m = np.mean((Pf-Y[841:])**2)
-print(m)
+print("Predict")
+P = regr.predict(X[841:])
+Pf = pd.DataFrame(P, columns = ['Survived'])
+
+Vf = Y[841:].reset_index(drop=True)
+
+print("m = " + str(np.mean(Pf - Vf)))
 
 score = regr.score(X[841:], Y[841:])
-print(score)
+print("score = " + str(score))
+
+
+print("-------------------")
+print("-------TEST--------")
+print("-------------------")
+
+test["Age"] = test["Age"].fillna(test["Age"].median())
+test.loc[test["Sex"] == "male", "Sex"] = 0
+test.loc[test["Sex"] == "female", "Sex"] = 1
+test["Embarked"] = test["Embarked"].fillna("S")
+test.loc[test["Embarked"] == "S", "Embarked"] = 0
+test.loc[test["Embarked"] == "C", "Embarked"] = 1
+test.loc[test["Embarked"] == "Q", "Embarked"] = 2
+
+TP = regr.predict(test[['Pclass', 'Sex', 'Age', 'Embarked']])
+TPf = pd.DataFrame(TP, columns = ['Survived'])
+print("Predictions")
+
+result = pd.concat([test[['PassengerId']], TPf],  axis=1)
+
+print(np.size(result))
+
+result.to_csv("kaggle.csv", index=False)
