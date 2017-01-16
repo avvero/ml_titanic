@@ -24,17 +24,20 @@ print(train.describe())
 
 # The titanic variable is available here.
 train["Age"] = train["Age"].fillna(train["Age"].median())
+train["Fare"] = train["Fare"].fillna(train["Fare"].median())
 train.loc[train["Sex"] == "male", "Sex"] = 0
 train.loc[train["Sex"] == "female", "Sex"] = 1
 train["Embarked"] = train["Embarked"].fillna("S")
 train.loc[train["Embarked"] == "S", "Embarked"] = 0
 train.loc[train["Embarked"] == "C", "Embarked"] = 1
 train.loc[train["Embarked"] == "Q", "Embarked"] = 2
+train["SibSp"] = train["SibSp"].fillna(0)
+train["Parch"] = train["Parch"].fillna(0)
 
 # Train 1
 
-t1 = train[['Pclass', 'Sex', 'Age', 'Embarked', 'Survived']]
-X = t1[['Pclass', 'Sex', 'Age', 'Embarked']]
+t1 = train[['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Survived']]
+X = t1[['Pclass', 'Sex', 'Age', 'Fare', 'Embarked']]
 Y = t1[['Survived']]
 
 print("Train SET")
@@ -61,24 +64,25 @@ score = regr.score(X[841:], Y[841:])
 print("score = " + str(score))
 
 
-print("-------------------")
-print("-------TEST--------")
-print("-------------------")
-
-test["Age"] = test["Age"].fillna(test["Age"].median())
-test.loc[test["Sex"] == "male", "Sex"] = 0
-test.loc[test["Sex"] == "female", "Sex"] = 1
-test["Embarked"] = test["Embarked"].fillna("S")
-test.loc[test["Embarked"] == "S", "Embarked"] = 0
-test.loc[test["Embarked"] == "C", "Embarked"] = 1
-test.loc[test["Embarked"] == "Q", "Embarked"] = 2
-
-TP = regr.predict(test[['Pclass', 'Sex', 'Age', 'Embarked']])
-TPf = pd.DataFrame(TP, columns = ['Survived'])
-print("Predictions")
-
-result = pd.concat([test[['PassengerId']], TPf],  axis=1)
-
-print(np.size(result))
-
-result.to_csv("kaggle.csv", index=False)
+# print("-------------------")
+# print("-------TEST--------")
+# print("-------------------")
+#
+# test["Age"] = test["Age"].fillna(test["Age"].median())
+# test["Fare"] = test["Fare"].fillna(test["Fare"].median())
+# test.loc[test["Sex"] == "male", "Sex"] = 0
+# test.loc[test["Sex"] == "female", "Sex"] = 1
+# test["Embarked"] = test["Embarked"].fillna("S")
+# test.loc[test["Embarked"] == "S", "Embarked"] = 0
+# test.loc[test["Embarked"] == "C", "Embarked"] = 1
+# test.loc[test["Embarked"] == "Q", "Embarked"] = 2
+#
+# TP = regr.predict(test[['Pclass', 'Sex', 'Age', 'Fare', 'Embarked']])
+# TPf = pd.DataFrame(TP, columns = ['Survived'])
+# print("Predictions")
+#
+# result = pd.concat([test[['PassengerId']], TPf],  axis=1)
+#
+# print(np.size(result))
+#
+# result.to_csv("kaggle.csv", index=False)
