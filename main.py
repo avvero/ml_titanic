@@ -6,13 +6,13 @@ from data_preporation import prepare
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score
-from titanic_support import plot_learning_curve
+from utils import plot_learning_curve
 import matplotlib.pyplot as plt
 
 
 # Print you can execute arbitrary python code
-train = pd.read_csv("train.csv", dtype={"Age": np.float64}, )
-test = pd.read_csv("test.csv", dtype={"Age": np.float64}, )
+train = pd.read_csv("data/train.csv", dtype={"Age": np.float64}, )
+test = pd.read_csv("data/test.csv", dtype={"Age": np.float64}, )
 
 # Print to standard output, and see the results in the "log" section below after running your script
 print("\n\nLen of the training data: " + str(len(train)))
@@ -71,4 +71,4 @@ submission = pd.DataFrame({
         "PassengerId": test["PassengerId"],
         "Survived": predictions
     })
-submission.to_csv("kaggle.csv", index=False)
+submission.to_csv("data/kaggle.csv", index=False)

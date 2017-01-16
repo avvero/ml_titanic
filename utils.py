@@ -1,16 +1,6 @@
-import re
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import learning_curve
-
-# A function to get the title from a name.
-def get_title(name):
-    # Use a regular expression to search for a title.  Titles always consist of capital and lowercase letters, and end with a period.
-    title_search = re.search(' ([A-Za-z]+)\.', name)
-    # If the title exists, extract and return it.
-    if title_search:
-        return title_search.group(1)
-    return ""
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
                         n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5)):
