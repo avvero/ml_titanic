@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
-import pylab as P
-import matplotlib.pyplot as plt
-from sklearn import linear_model
 from sklearn import cross_validation
+from sklearn import linear_model
 
 # Print you can execute arbitrary python code
 train = pd.read_csv("train.csv", dtype={"Age": np.float64}, )
@@ -31,8 +29,8 @@ train["Embarked"] = train["Embarked"].fillna("S")
 train.loc[train["Embarked"] == "S", "Embarked"] = 0
 train.loc[train["Embarked"] == "C", "Embarked"] = 1
 train.loc[train["Embarked"] == "Q", "Embarked"] = 2
-train["SibSp"] = train["SibSp"].fillna(0)
-train["Parch"] = train["Parch"].fillna(0)
+# train["SibSp"] = train["SibSp"].fillna(0)
+# train["Parch"] = train["Parch"].fillna(0)
 
 # Train 1
 
@@ -40,49 +38,37 @@ t1 = train[['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Survived']]
 X = t1[['Pclass', 'Sex', 'Age', 'Fare', 'Embarked']]
 Y = t1[['Survived']]
 
-print("Train SET")
-print(t1)
-
-regr = linear_model.LogisticRegression()
-regr.fit(X[0:840], Y[0:840])
-
-print("Result")
-print(regr)
-print(regr.coef_)
+predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked']
+alg = linear_model.LogisticRegression()
+scores = cross_validation.cross_val_score(alg, train[predictors], train["Survived"], cv=3)
 
 print("----------------")
 
-print("Predict")
-P = regr.predict(X[841:])
-Pf = pd.DataFrame(P, columns = ['Survived'])
-
-Vf = Y[841:].reset_index(drop=True)
-
-print("m = " + str(np.mean(Pf - Vf)))
-
-score = regr.score(X[841:], Y[841:])
-print("score = " + str(score))
+print(scores.mean())
 
 
-# print("-------------------")
-# print("-------TEST--------")
-# print("-------------------")
-#
-# test["Age"] = test["Age"].fillna(test["Age"].median())
-# test["Fare"] = test["Fare"].fillna(test["Fare"].median())
-# test.loc[test["Sex"] == "male", "Sex"] = 0
-# test.loc[test["Sex"] == "female", "Sex"] = 1
-# test["Embarked"] = test["Embarked"].fillna("S")
-# test.loc[test["Embarked"] == "S", "Embarked"] = 0
-# test.loc[test["Embarked"] == "C", "Embarked"] = 1
-# test.loc[test["Embarked"] == "Q", "Embarked"] = 2
-#
-# TP = regr.predict(test[['Pclass', 'Sex', 'Age', 'Fare', 'Embarked']])
-# TPf = pd.DataFrame(TP, columns = ['Survived'])
-# print("Predictions")
-#
-# result = pd.concat([test[['PassengerId']], TPf],  axis=1)
-#
-# print(np.size(result))
-#
-# result.to_csv("kaggle.csv", index=False)
+print("-------------------")
+print("-------TEST--------")
+print("-------------------")
+
+test["Age"] = test["Age"].fillna(test["Age"].median())
+test["Fare"] = test["Fare"].fillna(test["Fare"].median())
+test.loc[test["Sex"] == "male", "Sex"] = 0
+test.loc[test["Sex"] == "female", "Sex"] = 1
+test["Embarked"] = test["Embarked"].fillna("S")
+test.loc[test["Embarked"] == "S", "Embarked"] = 0
+test.loc[test["Embarked"] == "C", "Embarked"] = 1
+test.loc[test["Embarked"] == "Q", "Embarked"] = 2
+
+# Train the algorithm using all the training data
+alg.fit(train[predictors], train["Survived"])
+
+# Make predictions using the test set.
+predictions = alg.predict(test[predictors])
+
+# Create a new dataframe with only the columns Kaggle wants from the dataset.
+submission = pd.DataFrame({
+        "PassengerId": test["PassengerId"],
+        "Survived": predictions
+    })
+submission.to_csv("kaggle.csv", index=False)
