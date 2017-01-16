@@ -29,7 +29,7 @@ predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'Fam
 alg = linear_model.LogisticRegression()
 scores = cross_validation.cross_val_score(alg, train[predictors], train["Survived"], cv=3)
 
-print("----------------")
+print("Scores")
 print(scores.mean())
 
 print("-------TEST--------")
