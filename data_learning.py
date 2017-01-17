@@ -21,11 +21,10 @@ prepare(train)
 
 # print(pd.value_counts(train['Cabin']))
 
-print(train['Name'].apply(get_last_name))
+#print(train['Name'].apply(get_last_name))
 
-family_id_mapping = {}
-train.apply(lambda row: get_family_id(row, family_id_mapping), axis=1)
-test.apply(lambda row: get_family_id(row, family_id_mapping), axis=1)
+
 
 print(len(family_id_mapping))
 print(type(family_id_mapping))
+print(train)

@@ -27,7 +27,13 @@ def get_family_id(row, map):
         map[last_name] = current_id
     return ""
 
-def prepare(train):
+def set_family_id(row, map):
+    familyId = -1
+    if row["FamilySize"] > 0:
+        familyId = map[get_last_name(row['Name'])]
+    return familyId
+
+def prepare(train, family_id_mapping):
     # The titanic variable is available here.
     train["Age"] = train["Age"].fillna(train["Age"].median())
     train["Fare"] = train["Fare"].fillna(train["Fare"].median())
@@ -73,7 +79,6 @@ def prepare(train):
     # Add in the title column.
     train["Title"] = titles
 
-    # Verify that we converted everything.
-    #print(pd.value_counts(titles))
+    train["FamilyId"] = train.apply(lambda row: set_family_id(row, family_id_mapping), axis=1)
 
     return ""
