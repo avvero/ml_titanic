@@ -9,6 +9,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score
 from utils import plot_learning_curve
 import matplotlib.pyplot as plt
+from sklearn.feature_selection import SelectKBest, f_classif
 
 # Print you can execute arbitrary python code
 train = pd.read_csv("data/train.csv", dtype={"Age": np.float64}, )
