@@ -69,4 +69,5 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
              label="Cross-validation score")
 
     plt.legend(loc="best")
+    print("Plot scores " + str(train_scores_mean))
     return plt

@@ -14,19 +14,7 @@ import matplotlib.pyplot as plt
 train = pd.read_csv("data/train.csv", dtype={"Age": np.float64}, )
 test = pd.read_csv("data/test.csv", dtype={"Age": np.float64}, )
 
-# Print to standard output, and see the results in the "log" section below after running your script
-print("\n\nLen of the training data: " + str(len(train)))
-print("\n\nLen of the test data: " + str(len(test)))
-print("\n\nTypes of the data: ")
-print(train.dtypes)
-print("\n\nTop of the training data:")
-print(train.head())
-print("\n\nSummary statistics of training data")
-print(train.describe())
-
-# train['Age'].hist()
-# P.show()
-
+# Family distribution
 family_id_mapping = {}
 train.apply(lambda row: get_family_id(row, family_id_mapping), axis=1)
 test.apply(lambda row: get_family_id(row, family_id_mapping), axis=1)
@@ -49,7 +37,6 @@ scores = cross_val_score(
 )
 
 print("Scores")
-print(scores)
 print(scores)
 print(scores.mean())
 
