@@ -3,7 +3,6 @@ import numpy as np
 
 # A function to get the title from a name.
 def get_title(name):
-    # Use a regular expression to search for a title.  Titles always consist of capital and lowercase letters, and end with a period.
     title_search = re.search(' ([A-Za-z]+)\.', name)
     # If the title exists, extract and return it.
     if title_search:
@@ -12,12 +11,21 @@ def get_title(name):
 
 # A function to get the title from a name.
 def get_last_name(name):
-    # Use a regular expression to search for a title.  Titles always consist of capital and lowercase letters, and end with a period.
     title_search = re.search('([A-Z])\w+', name)
     # If the title exists, extract and return it.
     if title_search:
         return title_search.group(0)
     return np.NaN
+
+def get_family_id(row, map):
+    last_name = get_last_name(row['Name'])
+    if last_name not in map:
+        if len(map) == 0:
+            current_id = 1
+        else:
+            current_id = len(map) + 1
+        map[last_name] = current_id
+    return ""
 
 def prepare(train):
     # The titanic variable is available here.
