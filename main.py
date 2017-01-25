@@ -25,6 +25,21 @@ prepare(train, family_id_mapping)
 # Train 1
 predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'FamilySize', 'NameLength', 'Title', 'FamilyId']
 
+# Perform feature selection
+if False:
+    selector = SelectKBest(f_classif, k=5)
+    selector.fit(train[predictors], train["Survived"])
+
+    # Get the raw p-values for each feature, and transform from p-values into scores
+    scores = -np.log10(selector.pvalues_)
+
+    # Plot the scores.  See how "Pclass", "Sex", "Title", and "Fare" are the best?
+    plt.bar(range(len(predictors)), scores)
+    plt.xticks(range(len(predictors)), predictors, rotation='vertical')
+    plt.show()
+
+print("------- Learn --------")
+
 polynomial_features = PolynomialFeatures(degree=1, include_bias=False)
 alg = linear_model.LogisticRegression()
 pipeline = Pipeline([("polynomial_features", polynomial_features),
@@ -43,6 +58,8 @@ print(scores.mean())
 
 print("Alg")
 print(alg)
+
+print("------- Bias-Variance --------")
 
 print("Plot")
 plot_learning_curve(pipeline, "sdf", train[predictors], train["Survived"], (-0.1, 1.1), cv=3, n_jobs=1)
