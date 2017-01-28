@@ -4,9 +4,12 @@ from sklearn import cross_validation
 from sklearn import linear_model
 from data_preporation import prepare
 from data_preporation import get_family_id
+from data_preporation import get_ticket_prefix_id
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 from utils import plot_learning_curve
 import matplotlib.pyplot as plt
 from sklearn.feature_selection import SelectKBest, f_classif
@@ -20,13 +23,21 @@ family_id_mapping = {}
 train.apply(lambda row: get_family_id(row, family_id_mapping), axis=1)
 test.apply(lambda row: get_family_id(row, family_id_mapping), axis=1)
 
-prepare(train, family_id_mapping)
+# Ticket distribution
+get_ticket_prefix_id_mapping = {}
+train.apply(lambda row: get_ticket_prefix_id(row, get_ticket_prefix_id_mapping), axis=1)
+test.apply(lambda row: get_ticket_prefix_id(row, get_ticket_prefix_id_mapping), axis=1)
+
+prepare(train, family_id_mapping, get_ticket_prefix_id_mapping)
+
+print(get_ticket_prefix_id_mapping)
 
 # Train 1
-predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'FamilySize', 'NameLength', 'Title', 'FamilyId']
+predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'FamilySize', 'NameLength', 'Title',
+              'FamilyId']
 
 # Perform feature selection
-if False:
+if True:
     selector = SelectKBest(f_classif, k=5)
     selector.fit(train[predictors], train["Survived"])
 
@@ -42,14 +53,14 @@ print("------- Learn --------")
 
 polynomial_features = PolynomialFeatures(degree=1, include_bias=False)
 alg = linear_model.LogisticRegression()
+#alg = RandomForestClassifier(n_estimators=100)
 pipeline = Pipeline([("polynomial_features", polynomial_features),
                      ("logistic_regression", alg)])
 scores = cross_val_score(
     pipeline,
     train[predictors],
     train["Survived"],
-    cv=3,
-    # scoring="neg_mean_squared_error"
+    cv=3
 )
 
 print("Scores")
@@ -67,7 +78,7 @@ plt.show()
 
 print("-------TEST--------")
 
-prepare(test, family_id_mapping)
+prepare(test, family_id_mapping, get_ticket_prefix_id_mapping)
 
 # Train the algorithm using all the training data
 alg.fit(train[predictors], train["Survived"])

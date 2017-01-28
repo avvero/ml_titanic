@@ -14,8 +14,6 @@ import operator
 train = pd.read_csv("data/train.csv", dtype={"Age": np.float64}, )
 test = pd.read_csv("data/test.csv", dtype={"Age": np.float64}, )
 
-prepare(train)
-
 # Get all the titles and print how often each one occurs.
 # print(pd.value_counts(train["Cabin"]))
 
@@ -24,7 +22,4 @@ prepare(train)
 #print(train['Name'].apply(get_last_name))
 
 
-
-print(len(family_id_mapping))
-print(type(family_id_mapping))
-print(train)
+print(train['Ticket'].apply().unique())
