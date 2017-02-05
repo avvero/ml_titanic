@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 from sklearn import cross_validation
 from sklearn import linear_model
+from sklearn.cross_validation import StratifiedKFold
+from sklearn.feature_selection import RFECV
+
 from data_preporation import prepare, get_cabin_id
 from data_preporation import get_family_id
 from data_preporation import get_ticket_prefix_id
@@ -43,7 +46,7 @@ print("-------KMEANS--------")
 
 random_state = 170
 
-KMF = ['Ticket_s', 'Pclass']
+KMF = ['Ticket_s', 'Pclass', 'CabinN']
 kmx = train[KMF]
 
 km_model = KMeans(n_clusters=2, random_state=random_state).fit(kmx)
@@ -60,7 +63,7 @@ train['Ticket_s_g'] = y_pred
 
 # Train 1
 predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'FamilySize', 'NameLength', 'Title',
-              'FamilyId', 'Ticket_s_g', 'CabinN']
+              'FamilyId', 'CabinN']
 
 # Perform feature selection
 if True:
@@ -78,8 +81,9 @@ if True:
 print("------- Learn --------")
 
 polynomial_features = PolynomialFeatures(degree=1, include_bias=False)
-#alg = linear_model.LogisticRegression()
-alg = RandomForestClassifier(n_estimators=100)
+alg = linear_model.LogisticRegression()
+#alg = RandomForestClassifier(n_estimators=100)
+#alg = SVC()
 pipeline = Pipeline([("polynomial_features", polynomial_features),
                      ("logistic_regression", alg)])
 scores = cross_val_score(
@@ -100,6 +104,23 @@ print("------- Bias-Variance --------")
 
 print("Plot")
 plot_learning_curve(pipeline, "sdf", train[predictors], train["Survived"], (-0.1, 1.1), cv=3, n_jobs=1)
+plt.show()
+
+#Optimal number of features and visualize this
+rfecv_X = train[predictors]
+rfecv_Y = train["Survived"]
+
+rfecv = RFECV( estimator = alg , step = 1 , cv = StratifiedKFold( rfecv_Y , 2 ) , scoring = 'accuracy' )
+rfecv.fit( rfecv_X , rfecv_Y )
+
+#print (rfecv.score( train_X , train_y ) , rfecv.score( valid_X , valid_y ))
+#print( "Optimal number of features : %d" % rfecv.n_features_ )
+
+#Plot number of features VS. cross-validation scores
+plt.figure()
+plt.xlabel( "Number of features selected" )
+plt.ylabel( "Cross validation score (nb of correct classifications)" )
+plt.plot( range( 1 , len( rfecv.grid_scores_ ) + 1 ) , rfecv.grid_scores_ )
 plt.show()
 
 print("-------TEST--------")
