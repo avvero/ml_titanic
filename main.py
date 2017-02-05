@@ -54,10 +54,11 @@ print(km_model.score(kmx))
 y_pred = km_model.predict(kmx)
 print(y_pred)
 
-plt.figure(figsize=(12, 12))
-plt.scatter(train[['Ticket_s']], train[['Pclass']], c=y_pred)
-plt.title("Anisotropicly Distributed Blobs")
-plt.show()
+if False:
+    plt.figure(figsize=(12, 12))
+    plt.scatter(train[['Ticket_s']], train[['Pclass']], c=y_pred)
+    plt.title("Anisotropicly Distributed Blobs")
+    plt.show()
 
 train['Ticket_s_g'] = y_pred
 
@@ -66,7 +67,7 @@ predictors = ['Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'SibSp', 'Parch', 'Fam
               'FamilyId', 'CabinN']
 
 # Perform feature selection
-if True:
+if False:
     selector = SelectKBest(f_classif, k=5)
     selector.fit(train[predictors], train["Survived"])
 
@@ -82,7 +83,7 @@ print("------- Learn --------")
 
 polynomial_features = PolynomialFeatures(degree=1, include_bias=False)
 alg = linear_model.LogisticRegression()
-#alg = RandomForestClassifier(n_estimators=100)
+#alg = RandomForestClassifier(n_estimators=22)
 #alg = SVC()
 pipeline = Pipeline([("polynomial_features", polynomial_features),
                      ("logistic_regression", alg)])
