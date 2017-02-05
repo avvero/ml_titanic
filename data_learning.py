@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn import cross_validation
 import re
-from data_preporation import prepare
+from data_preporation import prepare, get_digits_only, skipbig
 from data_preporation import get_last_name
 from data_preporation import get_family_id
 import operator
@@ -22,4 +22,4 @@ test = pd.read_csv("data/test.csv", dtype={"Age": np.float64}, )
 #print(train['Name'].apply(get_last_name))
 
 
-print(train['Ticket'].apply().unique())
+print(train['Cabin'].unique())
