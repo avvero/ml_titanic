@@ -73,7 +73,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=1, tr
     plt.legend(loc="best")
     print("Plot train scores " + str(train_scores_mean))
     print("Plot test scores " + str(test_scores_mean))
-    return plt
+    return train_scores, test_scores
 
 
 def plot_confusion_matrix(cm, classes,

@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn import linear_model
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.model_selection import cross_val_score
+from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
@@ -59,16 +60,17 @@ alg = linear_model.LogisticRegression()
 # alg = AdaBoostClassifier()
 # alg = RandomForestClassifier(n_estimators=300)
 # alg = SVC()
-# alg = MLPClassifier(hidden_layer_sizes=(24,24,24))
+# alg = MLPClassifier(activation="logistic", hidden_layer_sizes=13, alpha=0.0001)
 
 pipeline = Pipeline([("polynomial_features", polynomial_features),
-                     ("logistic_regression", alg)])
+                     ("alg", alg)])
 scores = cross_val_score(
     pipeline,
     train[predictors],
     train["Survived"],
     cv=ShuffleSplit(n_splits=10, test_size=0.3, random_state=50)
 )
+print("Scores")
 print(scores)
 print(scores.mean())
 
@@ -80,22 +82,25 @@ print("------- Bias-Variance --------")
 from sklearn.metrics import confusion_matrix
 
 # Train the algorithm using all the training data
-
 alg.fit(train[predictors], train["Survived"])
-cnf_matrix = confusion_matrix(train["Survived"], alg.predict(train[predictors]))
-plot_confusion_matrix(cnf_matrix, classes=[], title='Confusion matrix, without normalization')
-plt.show()
 
 print("------- Bias-Variance --------")
-
 print("Plot")
-plot_learning_curve(pipeline, "sdf", train[predictors], train["Survived"], (-0.1, 1.1), cv=3, n_jobs=1)
+train_scores, test_scores = plot_learning_curve(pipeline, "sdf", train[predictors], train["Survived"], (-0.1, 1.1),
+                                                cv=ShuffleSplit(n_splits=10, test_size=0.3, random_state=50), n_jobs=1)
+print("Train score " + str(train_scores.mean()))
+print("Test score " + str(test_scores.mean()))
 plt.show()
 
 print("-------TEST--------")
-
 # TEST
 prepare(test, family_id_mapping, get_ticket_prefix_id_mapping, cabin_id_mapping)
+
+# Confusion matrix
+if False:
+    cnf_matrix = confusion_matrix(train["Survived"], alg.predict(train[predictors]))
+    plot_confusion_matrix(cnf_matrix, classes=[], title='Confusion matrix, without normalization')
+    plt.show()
 
 # Train the algorithm using all the training data
 # alg.fit(train[predictors], train["Survived"])
